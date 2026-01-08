@@ -1,0 +1,216 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client"
+  output   = "../generated"
+}
+
+datasource db {
+  provider     = "postgresql"
+  relationMode = "prisma"
+}
+
+// ============================================================
+// Demo Page Model
+// ============================================================
+
+model Page {
+  id        String   @id @default(uuid())
+  name      String
+  content   String?  @db.Text
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("pages")
+}
+
+// ============================================================
+// Prospect Model
+// Stores prospect/lead information including enrichment results
+// ============================================================
+model Prospect {
+  // Identity
+  id        String  @id @default(uuid())
+  name      String?
+  firstName String? @map("first_name")
+  lastName  String? @map("last_name")
+
+  // Professional Info
+  organization String?
+  title        String?
+  roleTitle    String? @map("role_title")
+  location     String?
+
+  // Contact - stored as JSON for flexibility
+  emails Json @default("[]")
+  // Example: [{"address": "email@example.com", "label": "work"}]
+
+  // Organization
+  priorityBucket String?  @map("priority_bucket")
+  priorityReason String?  @map("priority_reason")
+  listIds        String[] @default([]) @map("list_ids")
+  batchId        String?  @map("batch_id")
+
+  // Social Profiles - stored as JSON for nested structure
+  social Json @default("{}")
+  // Example: {"linkedin": {"primary": "url", "status": "discovered"}}
+
+  // Enrichment Metadata - stored as JSON for nested structure
+  enrichment Json @default("{}")
+  // Example: {"status": "pending", "linkedin_status": "...", "notes": "..."}
+
+  // Outreach - stored as JSON for nested structure
+  outreach Json @default("{}")
+  // Example: {"ready": true, "ready_at": "timestamp"}
+
+  // Timestamps
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  // Additional metadata for extensibility
+  metadata Json @default("{}")
+
+  // Relations
+  batch               Batch?               @relation(fields: [batchId], references: [batchId], onDelete: SetNull)
+  linkedinEnrichments LinkedinEnrichment[]
+
+  @@index([batchId])
+  @@index([createdAt(sort: Desc)])
+  @@map("prospects")
+}
+
+// ============================================================
+// Batch Model
+// Tracks batch prospect discovery operations
+// ============================================================
+model Batch {
+  // Identity
+  id      String @id @default(uuid())
+  batchId String @unique @map("batch_id")
+
+  // Search Parameters
+  keywords   String
+  maxResults Int    @map("max_results")
+
+  // Results
+  prospectsCreated Int      @default(0) @map("prospects_created")
+  prospectsFailed  Int      @default(0) @map("prospects_failed")
+  totalAttempted   Int      @default(0) @map("total_attempted")
+  prospectIds      String[] @default([]) @map("prospect_ids")
+
+  // Status
+  status BatchStatus
+
+  // Timestamps
+  createdAt   DateTime  @default(now()) @map("created_at")
+  completedAt DateTime? @map("completed_at")
+
+  // Metadata
+  notes    String?
+  metadata Json    @default("{}")
+
+  // Relations
+  prospects Prospect[]
+
+  @@index([batchId])
+  @@index([status])
+  @@index([createdAt(sort: Desc)])
+  @@map("batches")
+}
+
+enum BatchStatus {
+  in_progress
+  completed
+  failed
+}
+
+// ============================================================
+// LinkedIn Enrichment Model
+// Historical record of LinkedIn enrichment operations
+// ============================================================
+model LinkedinEnrichment {
+  // Identity
+  id String @id @default(uuid())
+
+  // Reference
+  prospectId String  @map("prospect_id")
+  batchId    String? @map("batch_id")
+
+  // Result
+  linkedinUrl String? @map("linkedin_url")
+  status      String
+  keywords    String
+
+  // Diagnostics
+  notes          String?
+  openaiResponse String? @map("openai_response") @db.Text
+  googleResults  String? @map("google_results") @db.Text
+
+  // Timestamp
+  createdAt DateTime @default(now()) @map("created_at")
+
+  // Relations
+  prospect Prospect @relation(fields: [prospectId], references: [id], onDelete: Cascade)
+
+  @@index([prospectId])
+  @@index([status])
+  @@index([createdAt(sort: Desc)])
+  @@index([batchId])
+  @@map("linkedin_enrichments")
+}
+
+// ============================================================
+// Enrichment Run Model (Optional - for future use)
+// Track batch enrichment runs
+// ============================================================
+model EnrichmentRun {
+  // Identity
+  id    String  @id @default(uuid())
+  runId String? @unique @map("run_id")
+
+  // Reference
+  listId      String?  @map("list_id")
+  prospectIds String[] @default([]) @map("prospect_ids")
+
+  // Status
+  stage EnrichmentStage?
+
+  // LinkedIn Stage
+  linkedinStatus       LinkedinStatus? @map("linkedin_status")
+  linkedinCompleted    Boolean         @default(false) @map("linkedin_completed")
+  linkedinCompletedAt  DateTime?       @map("linkedin_completed_at")
+  linkedinSuccessCount Int             @default(0) @map("linkedin_success_count")
+  linkedinFailureCount Int             @default(0) @map("linkedin_failure_count")
+
+  // Failures - stored as JSON array
+  failures Json @default("[]")
+  // Example: [{"prospectId": "...", "status": "...", "error": "..."}]
+
+  // Timestamps
+  createdAt   DateTime  @default(now()) @map("created_at")
+  completedAt DateTime? @map("completed_at")
+
+  @@index([runId])
+  @@index([listId])
+  @@index([stage])
+  @@index([createdAt(sort: Desc)])
+  @@map("enrichment_runs")
+}
+
+enum EnrichmentStage {
+  queued
+  linkedin
+  linkedin_completed
+  domain
+  completed
+  failed
+}
+
+enum LinkedinStatus {
+  queued
+  in_progress
+  completed
+  failed
+  partial
+}
