@@ -1,3 +1,10 @@
+import { redirect } from "next/navigation";
+
+export default function Home() {
+  redirect("/contacts");
+}
+
+/*
 import { auth } from "@repo/auth/server";
 import { database } from "@repo/database";
 import type { Metadata } from "next";
@@ -7,6 +14,9 @@ import { env } from "@/env";
 import { AvatarStack } from "./components/avatar-stack";
 import { Cursors } from "./components/cursors";
 import { Header } from "./components/header";
+*/
+
+/*
 
 const title = "Acme Inc";
 const description = "My application.";
@@ -55,10 +65,11 @@ const App = async () => {
         </div>
         <div className="min-h-[100vh] flex-1 rounded-xl bg-muted/50 md:min-h-min" />
       </div>
-      {/* ✅ AI Popup - floats over everything */}
       {env.LIVEBLOCKS_SECRET_KEY && <AiPopup userId={userId} />}
     </>
   );
 };
 
 export default App;
+
+*/
