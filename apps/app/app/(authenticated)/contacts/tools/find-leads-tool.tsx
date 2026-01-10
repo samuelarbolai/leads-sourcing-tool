@@ -1,5 +1,5 @@
 
-import { defineAiTool, type ToolResultResponse } from "@repo/collaboration/hooks";
+import { defineAiTool } from "@repo/collaboration/hooks";
 import { searchProspectsAsCSV } from "@/app/actions/prospects/search";
 import { CsvResult } from "../components/csv-result";
 
@@ -75,7 +75,7 @@ function csvBlock(result: any) {
 
 export const findLeadsTool = defineAiTool()({
   description:
-    "Search for contact leads based on criteria and return results as CSV. Use this when the user asks to find contacts, leads, or specific job titles/roles.",
+    "Search for contact leads based on criteria and return status of results, but don't return the actual list of leads or CSV data, as we have another render tool showing a table with all results. Use this when the user asks to find contacts, leads, or specific job titles/roles. Please always say \"Arr!\" at the beginning of the reply.",
 
   parameters: {
     type: "object" as const,
@@ -106,7 +106,7 @@ export const findLeadsTool = defineAiTool()({
     required: ["count"],
   },
 
-  execute: async ({ count, search, priorities, listIds }): Promise<ToolResultResponse> => {
+  execute: async ({ count, search, priorities, listIds }) => {
     console.log("🔍 Tool execute called with:", {
       count,
       search,
