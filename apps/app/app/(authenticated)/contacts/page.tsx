@@ -11,11 +11,10 @@ import {
 } from "@repo/collaboration/hooks";
 import { useEffect, useState } from "react";
 import "@liveblocks/react-ui/styles.css";
-import { interceptWebSocket } from "./debug-websocket";
+import { findLeadsTool } from "./tools/find-leads-tool";
 //import { findLeadsTool } from "./tools/find-leads-tool";
 import { testTool } from "./tools/test-tool";
 import { todayDateTool } from "./tools/todayDate";
-import { findLeadsTool } from "./tools/find-leads-tool";
 
 // Install WebSocket interceptor ONCE when module loads
 /*
@@ -26,7 +25,7 @@ if (typeof window !== "undefined") {
 
 function ContactsChatContent() {
   const [currentChatId, setCurrentChatId] = useState<string | null>(null);
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const { chats } = useAiChats();
   const createChat = useCreateAiChat();
