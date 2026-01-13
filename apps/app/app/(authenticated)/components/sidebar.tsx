@@ -9,13 +9,6 @@ import {
   CollapsibleTrigger,
 } from "@repo/design-system/components/ui/collapsible";
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@repo/design-system/components/ui/dropdown-menu";
-import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
@@ -37,18 +30,11 @@ import { cn } from "@repo/design-system/lib/utils";
 import { NotificationsTrigger } from "@repo/notifications/components/trigger";
 import {
   BookOpenIcon,
-  BotIcon,
   ChevronRightIcon,
-  FolderIcon,
-  FrameIcon,
   LifeBuoyIcon,
   MoreHorizontalIcon,
-  PieChartIcon,
   SendIcon,
-  Settings2Icon,
-  ShareIcon,
   SquareTerminalIcon,
-  Trash2Icon,
 } from "lucide-react";
 import Link from "next/link";
 import type { ReactNode } from "react";
@@ -72,104 +58,8 @@ const data = {
       isActive: true,
       items: [
         {
-          title: "Contacts",
-          url: "/contacts",
-        },
-        {
-          title: "Search Leads",
-          url: "/leads/search",
-        },
-        {
-          title: "AI Lead Finder",
-          url: "/leads/ai-finder",
-        },
-        {
-          title: "All Leads",
-          url: "/leads/all",
-        },
-      ],
-    },
-    {
-      title: "Lists & Campaigns",
-      url: "/lists",
-      icon: FolderIcon,
-      items: [
-        {
-          title: "My Lists",
-          url: "/lists/my-lists",
-        },
-        {
-          title: "Saved Criteria",
-          url: "/lists/saved-criteria",
-        },
-        {
-          title: "Export History",
-          url: "/lists/export-history",
-        },
-      ],
-    },
-    {
-      title: "Enrichment",
-      url: "/enrichment",
-      icon: BotIcon,
-      items: [
-        {
-          title: "LinkedIn Enrichment",
-          url: "/enrichment/linkedin",
-        },
-        {
-          title: "Email Finder",
-          url: "/enrichment/email",
-        },
-        {
-          title: "Enrichment Queue",
-          url: "/enrichment/queue",
-        },
-      ],
-    },
-    {
-      title: "Integrations",
-      url: "/integrations",
-      icon: ShareIcon,
-      items: [
-        {
-          title: "HubSpot",
-          url: "/integrations/hubspot",
-        },
-        {
-          title: "Google Sheets",
-          url: "/integrations/google-sheets",
-        },
-        {
-          title: "CSV Export",
-          url: "/integrations/csv",
-        },
-        {
-          title: "Manage Connections",
-          url: "/integrations/manage",
-        },
-      ],
-    },
-    {
-      title: "Settings",
-      url: "/settings",
-      icon: Settings2Icon,
-      items: [
-        {
-          title: "Workspace",
-          url: "/settings/workspace",
-        },
-        {
-          title: "Team Members",
-          url: "/settings/team",
-        },
-        {
-          title: "Billing & Usage",
-          url: "/settings/billing",
-        },
-        {
-          title: "API Keys",
-          url: "/settings/api-keys",
+          title: "Chat",
+          url: "/chat",
         },
       ],
     },
@@ -189,23 +79,6 @@ const data = {
       title: "Feedback",
       url: "/feedback",
       icon: SendIcon,
-    },
-  ],
-  portfolioCompanies: [
-    {
-      name: "All Companies",
-      url: "/portfolio/all",
-      icon: FrameIcon,
-    },
-    {
-      name: "Shared Lists",
-      url: "/portfolio/shared-lists",
-      icon: ShareIcon,
-    },
-    {
-      name: "Analytics",
-      url: "/portfolio/analytics",
-      icon: PieChartIcon,
     },
   ],
 };
@@ -254,7 +127,10 @@ export const GlobalSidebar = ({ children }: GlobalSidebarProperties) => {
                     {item.items?.length ? (
                       <>
                         <CollapsibleTrigger asChild>
-                          <SidebarMenuAction className="data-[state=open]:rotate-90" suppressHydrationWarning>
+                          <SidebarMenuAction
+                            className="data-[state=open]:rotate-90"
+                            suppressHydrationWarning
+                          >
                             <ChevronRightIcon />
                             <span className="sr-only">Toggle</span>
                           </SidebarMenuAction>
@@ -282,43 +158,6 @@ export const GlobalSidebar = ({ children }: GlobalSidebarProperties) => {
           <SidebarGroup className="group-data-[collapsible=icon]:hidden">
             <SidebarGroupLabel>Portfolio Companies</SidebarGroupLabel>
             <SidebarMenu>
-              {data.portfolioCompanies.map((item) => (
-                <SidebarMenuItem key={item.name}>
-                  <SidebarMenuButton asChild>
-                    <Link href={item.url}>
-                      <item.icon />
-                      <span>{item.name}</span>
-                    </Link>
-                  </SidebarMenuButton>
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <SidebarMenuAction showOnHover>
-                        <MoreHorizontalIcon />
-                        <span className="sr-only">More</span>
-                      </SidebarMenuAction>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent
-                      align="end"
-                      className="w-48"
-                      side="bottom"
-                    >
-                      <DropdownMenuItem>
-                        <FolderIcon className="text-muted-foreground" />
-                        <span>View Project</span>
-                      </DropdownMenuItem>
-                      <DropdownMenuItem>
-                        <ShareIcon className="text-muted-foreground" />
-                        <span>Share Project</span>
-                      </DropdownMenuItem>
-                      <DropdownMenuSeparator />
-                      <DropdownMenuItem>
-                        <Trash2Icon className="text-muted-foreground" />
-                        <span>Delete Project</span>
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </SidebarMenuItem>
-              ))}
               <SidebarMenuItem>
                 <SidebarMenuButton>
                   <MoreHorizontalIcon />
