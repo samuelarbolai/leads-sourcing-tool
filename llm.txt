@@ -1,0 +1,141 @@
+# @repo/database
+
+## Overview
+
+This package contains all database-related code for the project. It uses [Prisma](httpss://prisma.io) as the ORM to interact with a Neon serverless Postgres database. This package encapsulates the database schema, the Prisma client, and all generated types.
+
+## Schema
+
+The database schema is defined in the `prisma/schema.prisma` file. It consists of the following models:
+
+### Page
+
+A demo model.
+
+**Important Fields:**
+
+*   `id`: A unique identifier for the page.
+*   `name`: The name of the page.
+
+### Prospect
+
+Stores prospect/lead information including enrichment results.
+
+**Important Fields:**
+
+*   `id`: A unique identifier for the prospect.
+*   `name`: The name of the prospect.
+*   `organization`: The prospect's organization.
+*   `title`: The prospect's job title.
+*   `emails`: A JSON field to store email addresses.
+*   `batchId`: The ID of the batch this prospect belongs to.
+
+### Batch
+
+Tracks batch prospect discovery operations.
+
+**Important Fields:**
+
+*   `id`: A unique identifier for the batch.
+*   `batchId`: A unique identifier for the batch operation.
+*   `keywords`: The keywords used for the search.
+*   `status`: The status of the batch operation (`in_progress`, `completed`, `failed`).
+
+### LinkedinEnrichment
+
+A historical record of LinkedIn enrichment operations.
+
+**Important Fields:**
+
+*   `id`: A unique identifier for the enrichment record.
+*   `prospectId`: The ID of the prospect this enrichment belongs to.
+*   `linkedinUrl`: The LinkedIn URL found for the prospect.
+*   `status`: The status of the enrichment.
+
+### EnrichmentRun
+
+Tracks batch enrichment runs.
+
+**Important Fields:**
+
+*   `id`: A unique identifier for the enrichment run.
+*   `runId`: A unique identifier for the run.
+*   `linkedinStatus`: The status of the LinkedIn enrichment stage.
+
+## Querying the Database
+
+To interact with the database, you should use the exported `database` client. This client is an instance of the Prisma Client and is already configured to connect to the database.
+
+### Importing the Client and Types
+
+First, import the `database` client and any necessary types from `@repo/database`:
+
+```typescript
+import { database, Prospect } from '@repo/database';
+```
+
+### Examples
+
+Here are some examples of common database operations:
+
+**Finding multiple records (`findMany`)**
+
+```typescript
+const allProspects: Prospect[] = await database.prospect.findMany();
+console.log(allProspects);
+```
+
+**Finding a single record by its ID (`findUnique`)**
+
+```typescript
+const prospectId = "some-uuid-v4";
+const prospect: Prospect | null = await database.prospect.findUnique({
+  where: {
+    id: prospectId,
+  },
+});
+console.log(prospect);
+```
+
+**Creating a new record (`create`)**
+
+```typescript
+const newProspect = await database.prospect.create({
+  data: {
+    name: 'Jane Doe',
+    organization: 'Example Corp.',
+    title: 'CEO',
+  },
+});
+console.log(newProspect);
+```
+
+**Updating an existing record (`update`)**
+
+```typescript
+const updatedProspect = await database.prospect.update({
+  where: {
+    id: 'some-uuid-v4',
+  },
+  data: {
+    organization: 'New Example Corp.',
+  },
+});
+console.log(updatedProspect);
+```
+
+**Filtering records based on a specific field**
+
+```typescript
+const prospectsInProgress = await database.batch.findMany({
+  where: {
+    status: 'in_progress',
+  },
+});
+console.log(prospectsInProgress);
+```
+
+## Best Practices
+
+*   **Always use the exported `database` client.** Do not create your own instances of the Prisma Client. The exported client is already configured with the correct connection pooling and other settings.
+*   **Use the generated types.** The generated types (e.g., `Prospect`, `Batch`) provide type safety for your database operations.
