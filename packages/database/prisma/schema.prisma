@@ -65,11 +65,13 @@ model Prospect {
   // Example: {"ready": true, "ready_at": "timestamp"}
 
   // Timestamps
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
+  harvestedAt DateTime? @map("harvested_at")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
 
   // Additional metadata for extensibility
-  metadata Json @default("{}")
+  metadata       Json  @default("{}")
+  importMetadata Json? @map("import_metadata")
 
   // Relations
   batch               Batch?               @relation(fields: [batchId], references: [batchId], onDelete: SetNull)

@@ -28,10 +28,41 @@ export function CsvResult({ csv, totalFetched }: CsvResultProps) {
 		document.body.removeChild(a);
 	};
 
+	// Proper CSV parsing that handles quoted fields with commas
+	const parseCSVLine = (line: string): string[] => {
+		const result: string[] = [];
+		let current = "";
+		let inQuotes = false;
+
+		for (let i = 0; i < line.length; i++) {
+			const char = line[i];
+			const nextChar = line[i + 1];
+
+			if (char === '"') {
+				if (inQuotes && nextChar === '"') {
+					// Escaped quote
+					current += '"';
+					i++; // Skip next quote
+				} else {
+					// Toggle quote state
+					inQuotes = !inQuotes;
+				}
+			} else if (char === "," && !inQuotes) {
+				// Field separator
+				result.push(current);
+				current = "";
+			} else {
+				current += char;
+			}
+		}
+		result.push(current); // Add last field
+		return result;
+	};
+
 	// Parse CSV to show preview
-	const lines = csv.split("\n");
-	const headers = lines[0]?.split(",") || [];
-	const previewRows = lines.slice(1, 6); // Show first 5 rows
+	const lines = csv.split("\n").filter((line) => line.trim());
+	const headers = lines[0] ? parseCSVLine(lines[0]) : [];
+	const previewRows = lines.slice(1, 21); // Show first 20 rows (changed from 6)
 
 	return (
 		<div className="rounded-lg border border-gray-200 bg-white shadow-sm">
@@ -85,7 +116,7 @@ export function CsvResult({ csv, totalFetched }: CsvResultProps) {
 										key={i}
 										className="px-3 py-2 font-medium text-gray-900"
 									>
-										{header.replace(/"/g, "")}
+										{header}
 									</th>
 								))}
 							</tr>
@@ -93,12 +124,12 @@ export function CsvResult({ csv, totalFetched }: CsvResultProps) {
 						<tbody>
 							{previewRows.map((row, i) => {
 								if (!row.trim()) return null;
-								const cells = row.split(",");
+								const cells = parseCSVLine(row);
 								return (
 									<tr key={i} className="border-b border-gray-100">
 										{cells.map((cell, j) => (
 											<td key={j} className="px-3 py-2 text-gray-700">
-												{cell.replace(/"/g, "")}
+												{cell}
 											</td>
 										))}
 									</tr>
@@ -107,9 +138,9 @@ export function CsvResult({ csv, totalFetched }: CsvResultProps) {
 						</tbody>
 					</table>
 				</div>
-				{lines.length > 6 && (
+				{lines.length > 21 && (
 					<p className="mt-3 text-gray-500 text-sm">
-						... and {lines.length - 6} more rows
+						... and {lines.length - 21} more rows
 					</p>
 				)}
 			</div>
