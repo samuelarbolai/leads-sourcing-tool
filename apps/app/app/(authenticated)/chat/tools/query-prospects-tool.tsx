@@ -127,6 +127,7 @@ Examples:
         company,
         role,
         limit,
+        "tool version": "1.0.0",
       });
 
       const result = await queryProspects({
