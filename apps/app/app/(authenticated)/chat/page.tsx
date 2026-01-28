@@ -11,7 +11,6 @@ import {
 } from "@repo/collaboration/hooks";
 import { useEffect, useState } from "react";
 import "@liveblocks/react-ui/styles.css";
-import { findLeadsTool } from "./tools/find-leads-tool";
 import { queryProspectsTool } from "./tools/query-prospects-tool";
 //import { findLeadsTool } from "./tools/find-leads-tool";
 import { testTool } from "./tools/test-tool";
@@ -181,7 +180,10 @@ function ChatContent() {
             <div className="flex-1 overflow-hidden">
               <RegisterAiTool name="test-tool" tool={testTool} />
               <RegisterAiTool name="today-date-tool" tool={todayDateTool} />
-              <RegisterAiTool name="query-prospects-tool" tool={queryProspectsTool} />
+              <RegisterAiTool
+                name="query-prospects-tool"
+                tool={queryProspectsTool}
+              />
               <AiChat
                 chatId={currentChatId}
                 copilotId="co_UZksd4JpAcg544I0NIBV5"

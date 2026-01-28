@@ -2,7 +2,6 @@ import { defineAiTool } from "@repo/collaboration/hooks";
 import { queryProspects } from "@/app/actions/prospects/query";
 import { CsvResult } from "../components/csv-result";
 
-
 function csvBlock(result: any) {
   // Check if there's an error
   if (result?.error) {
@@ -30,7 +29,6 @@ function csvBlock(result: any) {
     </div>
   );
 }
-
 
 export const queryProspectsTool: ReturnType<ReturnType<typeof defineAiTool>> =
   defineAiTool()({
@@ -122,24 +120,22 @@ Examples:
     },
 
     execute: async ({ name, company, role, limit }) => {
-      console.log("🔍 Tool execute called with:", {
+      console.log("🔍 queryProspectsTool execute called with:", {
         name,
         company,
         role,
-        limit
+        limit,
       });
 
-      const result = await queryProspects(
-        {
-          name: name as string | undefined,
-          company: company as string | undefined,
-          role: role as string | undefined,
-          limit: limit as number | undefined,
-        }
-      );
-      console.log("🔍 Tool execute result:", result);
+      const result = await queryProspects({
+        name: name as string | undefined,
+        company: company as string | undefined,
+        role: role as string | undefined,
+        limit: limit as number | undefined,
+      });
+      console.log("🔍 queryProspectsTool execute result:", result);
       return result;
-      },
+    },
     render: ({ stage, result }) => {
       if (stage !== "executed") {
         return <div>Loading...</div>;
@@ -147,8 +143,3 @@ Examples:
       return csvBlock(result);
     },
   });
-   
-
-
-
-
