@@ -58,7 +58,9 @@ export const queryProspectsTool: ReturnType<ReturnType<typeof defineAiTool>> =
         - "Jon" → "Jon.*" (catches Jon, Jonathan, Jonny)
         - "Sam" → "Sam.*" (catches Sam, Samuel, Samantha)
 
-        **IMPORTANT:** Returns paginated results with status information. Does NOT return the actual lead data or CSV - another render tool displays the table. Your response should acknowledge the search was performed and summarize what was found.
+        ///////OUPUT INSTRUCTIONS///////
+
+        **IMPORTANT:** Please Do NOT return the actual lead data or CSV, as another render tool displays the table. Your response should only acknowledge the search was performed and summarize what was found.
 
         **ALWAYS start your response with "Arr!" when using this tool.**`,
 
